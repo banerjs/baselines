@@ -126,7 +126,7 @@ def launch(
             'You are running HER with just a single MPI worker. This will work, but the ' +
             'experiments that we report in Plappert et al. (2018, https://arxiv.org/abs/1802.09464) ' +
             'were obtained with --num_cpu 19. This makes a significant difference and if you ' +
-            'are looking to reproduce those results, be aware of this. Please also refer to ' + 
+            'are looking to reproduce those results, be aware of this. Please also refer to ' +
             'https://github.com/openai/baselines/issues/314 for further details.')
         logger.warn('****************')
         logger.warn()
@@ -168,7 +168,7 @@ def launch(
 
 
 @click.command()
-@click.option('--env_name', type=str, default='FetchReach-v0', help='the name of the OpenAI Gym environment that you want to train on')
+@click.option('--env_name', type=str, default='FetchReach-v1', help='the name of the OpenAI Gym environment that you want to train on')
 @click.option('--logdir', type=str, default=None, help='the path to where logs and policy pickles should go. If not specified, creates a folder in /tmp/')
 @click.option('--n_epochs', type=int, default=50, help='the number of training epochs to run')
 @click.option('--num_cpu', type=int, default=1, help='the number of CPU cores to use (using MPI)')

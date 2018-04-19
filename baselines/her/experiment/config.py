@@ -10,7 +10,7 @@ from baselines.her.her import make_sample_her_transitions
 
 
 DEFAULT_ENV_PARAMS = {
-    'FetchReach-v0': {
+    'FetchReach-v1': {
         'n_cycles': 10,
     },
 }
@@ -83,7 +83,7 @@ def prepare_params(kwargs):
         del kwargs['lr']
     for name in ['buffer_size', 'hidden', 'layers',
                  'network_class',
-                 'polyak', 
+                 'polyak',
                  'batch_size', 'Q_lr', 'pi_lr',
                  'norm_eps', 'norm_clip', 'max_u',
                  'action_l2', 'clip_obs', 'scope', 'relative_goals']:
