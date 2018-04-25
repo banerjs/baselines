@@ -5,8 +5,10 @@ register(
     id='Taxi-OOMDP-v0',
     entry_point='baselines.her.envs.oomdp_taxi:TaxiEnv',
     reward_threshold=8,
-    max_episode_steps=200,
+    max_episode_steps=1000,
     kwargs={
-        'reward_type': 'sparse'
+        'reward_type': 'sparse',
+        'num_passengers': 1,
+        'layout': 'no_walls',
     }
 )
