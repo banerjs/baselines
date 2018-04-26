@@ -188,10 +188,10 @@ class TaxiEnv(gym.GoalEnv):
     def reset(self, hard=False):
         # If this is not a hard reset, then simply call the underlying reset of
         # the MDP
-        if not hard:
-            self.mdp.reset()
-            mdp_state = self.mdp.get_curr_state()
-            return self._get_obs_from_state(mdp_state)
+        # if not hard:
+        #     self.mdp.reset()
+        #     mdp_state = self.mdp.get_curr_state()
+        #     return self._get_obs_from_state(mdp_state)
 
         # Use the layout to set the taxi and passengers that need to be used to
         # set the MDP
