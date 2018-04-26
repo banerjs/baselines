@@ -15,6 +15,9 @@ from gym.utils import seeding
 # Simple RL imports
 from simple_rl.tasks import TaxiOOMDP
 
+# Tensorflow
+import tensorflow as tf
+
 # Helper classes and functions
 
 class TaxiLayout(object):
@@ -246,9 +249,10 @@ class TaxiEnv(gym.GoalEnv):
         #     return -(d > self.goal_distance_threshold).astype(np.float32)
         # else:
         #     return -d
-        if (achieved_goal == info["achieved_goal"]).all() and (desired_goal == info["desired_goal"]).all():
-            return info["reward"]
-        raise Exception("Well, we're in a pickle")
+        ag_control = tf.assert_equal(tf.reduce_all(achieved_goal == info["achieved_goal"]), True)
+        dg_control = tf.assert_equal(tf.reduce_all(desired_goal == info["desired_goal"]),  True)
+        with tf.control_dependencies([ag_control, dg_control]):
+            return info["reward"][:,0]
 
 
     def render(self, mode="human"):

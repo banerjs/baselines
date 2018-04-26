@@ -56,6 +56,8 @@ def make_session(num_cpu=None, make_default=False):
         inter_op_parallelism_threads=num_cpu,
         intra_op_parallelism_threads=num_cpu)
     tf_config.gpu_options.allocator_type = 'BFC'
+    tf_config.gpu_options.allow_growth = True
+    # tf_config.gpu_options.per_process_gpu_memory_fraction = 0.2
     if make_default:
         return tf.InteractiveSession(config=tf_config)
     else:

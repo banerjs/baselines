@@ -13,6 +13,8 @@ import baselines.her.experiment.config as config
 from baselines.her.rollout import RolloutWorker
 from baselines.her.util import mpi_fork
 
+# Hack to import the taxi domain
+import baselines.her.envs as envs
 
 def mpi_average(value):
     if value == []:

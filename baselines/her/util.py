@@ -103,8 +103,7 @@ def mpi_fork(n):
             "mpirun",
             "-np",
             str(n),
-            "-bind-to",
-            "core",
+            "-bind-to-core",
             sys.executable
         ]
         args += sys.argv
