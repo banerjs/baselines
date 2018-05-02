@@ -67,12 +67,12 @@ TaxiLayout.LAYOUTS = {
             {"x": 4, "y": 5}, {"x": 4, "y": 6},
             {"x": 5, "y": 2}, {"x": 5, "y": 3},
         ],
-        passenger_choices=[
-            {"x": 2, "y": 2}, {"x": 2, "y": 5}, {"x": 6, "y": 2}, {"x": 6, "y": 6}
-        ],
-        destination_choices=[
-            {"x": 2, "y": 2}, {"x": 2, "y": 5}, {"x": 6, "y": 2}, {"x": 6, "y": 6}
-        ]
+        # passenger_choices=[
+        #     {"x": 2, "y": 2}, {"x": 2, "y": 5}, {"x": 6, "y": 2}, {"x": 6, "y": 6}
+        # ],
+        # destination_choices=[
+        #     {"x": 2, "y": 2}, {"x": 2, "y": 5}, {"x": 6, "y": 2}, {"x": 6, "y": 6}
+        # ]
     ),
     'diuk_11x11': TaxiLayout(
         11, 11,
@@ -124,6 +124,7 @@ class TaxiEnv(gym.GoalEnv):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, num_passengers=1, layout='diuk_7x7', seed=None, goal_distance_threshold=1e-7, reward_type='sparse'):
+
         self.seed(seed)
         self.num_passengers = num_passengers
         self.reward_type = reward_type
@@ -235,24 +236,39 @@ class TaxiEnv(gym.GoalEnv):
         # Get the string of the action
         action = self.mdp.get_actions()[np.argmax(action)]
 
-        reward, next_state = self.mdp.execute_agent_action(action)
-        done = next_state.is_terminal()
-
+        # reward, next_state = self.mdp.execute_agent_action(action)
+        _, next_state = self.mdp.execute_agent_action(action)
         obs = self._get_obs_from_state(next_state)
 
-        return (obs, reward, done, {**obs, "reward": reward})
+        reward = self.compute_reward(obs["achieved_goal"], self.goal, {})
+
+        done = next_state.is_terminal()
+        # if done:
+        #     a = next_state.get_first_obj_of_class("passenger")
+        #     init_state = self.mdp.get_init_state()
+        #     init_a = init_state.get_first_obj_of_class("passenger")
+        #     print(
+        #         "Orig:",
+        #         init_state.get_agent_x(), init_state.get_agent_y(), init_a,
+        #         "\n\tNow:",
+        #         reward, next_state.get_agent_x(), next_state.get_agent_y(), a, done
+        #     )
+
+        # info = {**obs, "reward": reward}
+        info = {}
+        return (obs, reward, done, info)
 
     def compute_reward(self, achieved_goal, desired_goal, info):
         # Give the reward only if the desired goal matches the observed goal
-        # d = np.linalg.norm(achieved_goal - desired_goal, axis=-1)
-        # if self.reward_type == 'sparse':
-        #     return -(d > self.goal_distance_threshold).astype(np.float32)
-        # else:
-        #     return -d
-        ag_control = tf.assert_equal(tf.reduce_all(achieved_goal == info["achieved_goal"]), True)
-        dg_control = tf.assert_equal(tf.reduce_all(desired_goal == info["desired_goal"]),  True)
-        with tf.control_dependencies([ag_control, dg_control]):
-            return info["reward"][:,0]
+        d = np.linalg.norm(achieved_goal - desired_goal, axis=-1)
+        if self.reward_type == 'sparse':
+            return -(d > self.goal_distance_threshold).astype(np.float32)
+        else:
+            return -d
+        # ag_control = tf.assert_equal(tf.reduce_all(achieved_goal == info["achieved_goal"]), True)
+        # dg_control = tf.assert_equal(tf.reduce_all(desired_goal == info["desired_goal"]),  True)
+        # with tf.control_dependencies([ag_control, dg_control]):
+        #     return info["reward"][:,0]
 
 
     def render(self, mode="human"):

@@ -8,11 +8,26 @@ from baselines import logger
 from baselines.her.ddpg import DDPG
 from baselines.her.her import make_sample_her_transitions
 
+# TableSim global helpers
+NUM_TABLE_SIM_ENVS = 0
+
+def make_table_sim_env():
+    global NUM_TABLE_SIM_ENVS
+    env_name = 'TableSim-v0'
+    table_sim_spec = gym.envs.registry.spec(env_name)
+    table_sim_spec._kwargs['celery_queue'] = 'table_sim{}'.format(NUM_TABLE_SIM_ENVS)
+    NUM_TABLE_SIM_ENVS += 1
+    return gym.make(env_name)
+
+# All globals
 
 DEFAULT_ENV_PARAMS = {
     'FetchReach-v1': {
         'n_cycles': 10,
     },
+    'TableSim-v0': {
+        'make_env': make_table_sim_env
+    }
 }
 
 
@@ -70,7 +85,7 @@ def prepare_params(kwargs):
     env_name = kwargs['env_name']
     def make_env():
         return gym.make(env_name)
-    kwargs['make_env'] = make_env
+    kwargs['make_env'] = (kwargs.get('make_env') or make_env) # Don't override make_env
     tmp_env = cached_make_env(kwargs['make_env'])
     assert hasattr(tmp_env, '_max_episode_steps')
     kwargs['T'] = tmp_env._max_episode_steps
